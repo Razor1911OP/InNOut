@@ -1,0 +1,28 @@
+services:
+  narip-api:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      NARIP_DEBUG: "false"
+    volumes:
+      - ./backend:/app/backend:ro
+
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    volumes:
+      - ./deploy/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      - narip-api
+
+  narip-ingest-gateway:
+    build:
+      context: ./go-services/ingest-gateway
+    ports:
+      - "8081:8081"
+    environment:
+      NARIP_UPSTREAM: http://narip-api:8080
+    depends_on:
+      - narip-api

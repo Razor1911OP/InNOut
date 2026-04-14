@@ -1,0 +1,102 @@
+openapi: 3.1.0
+info:
+  title: NARIP Core API
+  version: 0.1.0
+  description: |
+    Nexus AI Risk Intelligence Platform — REST surface for seven detection modules,
+    unified scoring, integrations, and observability. Live spec is served at `/openapi.json`
+    when running the FastAPI application.
+servers:
+  - url: http://localhost:8080
+paths:
+  /health:
+    get:
+      summary: Liveness
+      responses:
+        "200":
+          description: OK
+  /v1/detect/phishing:
+    post:
+      summary: Phishing email detection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmailEvent"
+      responses:
+        "200":
+          description: Phishing probability and model trace
+  /v1/risk/score:
+    post:
+      summary: Unified enterprise risk (0–100) with SHAP breakdown
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UnifiedScoreRequest"
+      responses:
+        "200":
+          description: Unified risk response
+  /v1/risk/score/batch:
+    post:
+      summary: Batch unified scoring (REST alternative to streaming)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items: { $ref: "#/components/schemas/UnifiedScoreRequest" }
+      responses:
+        "200":
+          description: Array of unified risk responses
+  /v1/risk/snapshot:
+    get:
+      summary: Default unified risk snapshot for dashboards
+      responses:
+        "200":
+          description: Unified risk response
+  /v1/incidents/recent:
+    get:
+      summary: Poll recent pub/sub messages (newest first)
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, default: 50 }
+        - name: topic_prefix
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: List of topic/payload objects
+  /metrics:
+    get:
+      summary: Prometheus metrics
+      responses:
+        "200":
+          description: text exposition format
+components:
+  schemas:
+    EmailEvent:
+      type: object
+      required: [message_id, sender]
+      properties:
+        message_id: { type: string }
+        sender: { type: string }
+        subject: { type: string }
+        body_text: { type: string }
+        urls:
+          type: array
+          items: { type: string }
+    UnifiedScoreRequest:
+      type: object
+      properties:
+        email: { $ref: "#/components/schemas/EmailEvent" }
+        transaction: { type: object }
+        flows: { type: array }
+        otp: { type: object }
+        account: { type: object }
+        supply: { type: object }

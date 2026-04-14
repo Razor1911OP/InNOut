@@ -1,0 +1,38 @@
+# SOAR-style automation — tune thresholds per tenant. Actions map to NARIP automation executor.
+
+- id: critical_escalation
+  name: Critical Falcon/Splunk telemetry escalation
+  enabled: true
+  match:
+    risk_score_gte: 78
+  steps:
+    - action: publish
+      topic: soar.critical
+    - action: create_case
+      priority: P1
+    - action: tag
+      value: analyst_queue_priority
+
+- id: lateral_movement_watch
+  name: Lateral movement correlation
+  enabled: true
+  match:
+    risk_score_gte: 55
+    tactic_in:
+      - lateral_movement
+  steps:
+    - action: publish
+      topic: soar.lateral
+    - action: create_case
+      priority: P2
+
+- id: auto_noise_triage
+  name: Auto-triage low risk (reduce human queue)
+  enabled: true
+  match:
+    risk_score_lte: 22
+  steps:
+    - action: create_case
+      priority: P4
+    - action: suggest_close
+      reason: below_automation_threshold

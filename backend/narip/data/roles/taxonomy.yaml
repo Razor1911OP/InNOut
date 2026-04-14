@@ -1,0 +1,92 @@
+# Role clusters for personalized phishing exposure & adaptive training (NARIP Workforce).
+# Finance vs logistics vs exec see different lure vocabularies in the wild.
+
+clusters:
+  finance:
+    display_name: "Finance & Accounting"
+    typical_lures:
+      - invoice
+      - wire transfer
+      - ACH
+      - SWIFT
+      - payment overdue
+      - IRS
+      - tax refund
+      - vendor payment
+    baseline_click_risk: 0.42
+    priority_modules:
+      - "BEC & wire fraud recognition"
+      - "Invoice fraud micro-drills"
+
+  logistics:
+    display_name: "Logistics & Operations"
+    typical_lures:
+      - shipment
+      - tracking
+      - customs
+      - delivery failed
+      - DHL
+      - FedEx
+      - UPS
+      - container
+      - bill of lading
+    baseline_click_risk: 0.38
+    priority_modules:
+      - "Shipping & carrier impersonation"
+      - "Credential harvesting on mobile"
+
+  executive:
+    display_name: "Leadership"
+    typical_lures:
+      - board
+      - confidential
+      - strategic
+      - urgent wire
+      - acquisition
+      - legal hold
+    baseline_click_risk: 0.35
+    priority_modules:
+      - "Whaling / CEO fraud"
+      - "Sensitive data exfiltration"
+
+  hr:
+    display_name: "Human Resources"
+    typical_lures:
+      - payroll
+      - benefits
+      - W-2
+      - PTO
+      - background check
+      - policy update
+    baseline_click_risk: 0.4
+    priority_modules:
+      - "HR-themed credential theft"
+      - "Privacy & PII handling"
+
+  engineering:
+    display_name: "Engineering & IT"
+    typical_lures:
+      - npm
+      - pipeline
+      - AWS
+      - OAuth
+      - repository
+      - CVE
+      - security patch
+    baseline_click_risk: 0.33
+    priority_modules:
+      - "Supply-chain & dependency phishing"
+      - "Dev tool impersonation"
+
+  general:
+    display_name: "General Staff"
+    typical_lures:
+      - password reset
+      - MFA
+      - shared document
+      - Teams
+      - Zoom
+    baseline_click_risk: 0.45
+    priority_modules:
+      - "Foundations: link & attachment analysis"
+      - "MFA fatigue attacks"
